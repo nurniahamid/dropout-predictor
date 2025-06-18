@@ -34,22 +34,26 @@ if st.button("🔍 Prediksi Dropout"):
         'Tuition_fees_up_to_date': [1 if tuition_paid == "Ya" else 0]
     })
 
-    # Pastikan urutan kolom persis seperti saat training
+    # Tampilkan nama kolom input vs model
+    st.write("📌 Kolom yang dibutuhkan model:", list(model.feature_names_in_))
+    st.write("📌 Kolom yang diberikan input:", list(input_data.columns))
+
+    # Validasi kolom
     expected_cols = list(model.feature_names_in_)
-    input_data = input_data[expected_cols]
+    missing_cols = [col for col in expected_cols if col not in input_data.columns]
 
-    st.write("🛠 Model expects columns:", list(model.feature_names_in_))
-    st.write("🧪 Input DataFrame columns:", list(input_data.columns))
-
-
-    # Predict
-    prediction = model.predict(input_data)[0]
-    probability = model.predict_proba(input_data)[0][1]
-
-    if prediction == 1:
-        st.error(f"⚠️ Mahasiswa ini BERISIKO dropout (Probabilitas: {probability:.2%})")
+    if missing_cols:
+        st.error(f"❌ Kolom berikut hilang di input: {missing_cols}")
     else:
-        st.success(f"✅ Mahasiswa ini diprediksi TIDAK dropout (Probabilitas dropout: {probability:.2%})")
+        input_data = input_data[expected_cols]
+        prediction = model.predict(input_data)[0]
+        probability = model.predict_proba(input_data)[0][1]
+
+        if prediction == 1:
+            st.error(f"⚠️ Mahasiswa ini BERISIKO dropout (Probabilitas: {probability:.2%})")
+        else:
+            st.success(f"✅ Mahasiswa ini diprediksi TIDAK dropout (Probabilitas dropout: {probability:.2%})")
 
 st.markdown("---")
 st.caption("Model prediksi dropout oleh Jaya Jaya Institut © 2025")
+
