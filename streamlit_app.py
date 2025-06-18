@@ -38,6 +38,9 @@ if st.button("🔍 Prediksi Dropout"):
     expected_cols = list(model.feature_names_in_)
     input_data = input_data[expected_cols]
 
+    st.write("🛠 Model expects columns:", list(model.feature_names_in_))
+    st.write("🧪 Input DataFrame columns:", list(input_data.columns))
+
 
     # Predict
     prediction = model.predict(input_data)[0]
