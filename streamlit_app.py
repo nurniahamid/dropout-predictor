@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import joblib
@@ -22,29 +21,11 @@ tuition_paid = st.selectbox("Biaya Kuliah Terbayar", ["Ya", "Tidak"])
 # Button to predict
 if st.button("🔍 Prediksi Dropout"):
     try:
-        # Bangun DataFrame input manual
-        input_df = pd.DataFrame([{
+        # Bangun dictionary input
+        input_dict = {
             'Gender': 1 if gender == "Laki-laki" else 0,
             'Age_at_enrollment': age,
-            'Admission_grade': admission_grade,
-            'Curricular_units_1st_sem_grade': semester1,
-            'Curricular_units_2nd_sem_grade': semester2,
-            'Scholarship_holder': 1 if scholarship == "Ya" else 0,
-            'Debtor': 1 if debtor == "Ya" else 0,
-            'Tuition_fees_up_to_date': 1 if tuition_paid == "Ya" else 0
-        }])
+            'Admission_grade': admis_
 
-        # Jalankan prediksi
-        y_pred = model.predict(input_df)[0]
-        y_prob = model.predict_proba(input_df)[0][1]
-
-        if y_pred == 1:
-            st.error(f"⚠️ Mahasiswa ini BERISIKO dropout (Probabilitas: {y_prob:.2%})")
-        else:
-            st.success(f"✅ Mahasiswa ini diprediksi TIDAK dropout (Probabilitas dropout: {y_prob:.2%})")
-
-    except Exception as e:
-        st.error("Terjadi kesalahan saat memproses prediksi.")
-        st.text(f"Detail: {e}")
 
 
