@@ -34,13 +34,10 @@ if st.button("🔍 Prediksi Dropout"):
         'Tuition_fees_up_to_date': [1 if tuition_paid == "Ya" else 0]
     })
 
-    # Susun ulang kolom sesuai model
-    expected_cols = [
-        'Gender', 'Age_at_enrollment', 'Admission_grade',
-        'Curricular_units_1st_sem_grade', 'Curricular_units_2nd_sem_grade',
-        'Scholarship_holder', 'Debtor', 'Tuition_fees_up_to_date'
-    ]
+    # Pastikan urutan kolom persis seperti saat training
+    expected_cols = list(model.feature_names_in_)
     input_data = input_data[expected_cols]
+
 
     # Predict
     prediction = model.predict(input_data)[0]
