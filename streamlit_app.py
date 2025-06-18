@@ -18,27 +18,36 @@ scholarship = st.selectbox("Penerima Beasiswa", ["Ya", "Tidak"])
 debtor = st.selectbox("Memiliki Hutang", ["Ya", "Tidak"])
 tuition_paid = st.selectbox("Biaya Kuliah Terbayar", ["Ya", "Tidak"])
 
+# Tambahan input baru sesuai fitur model
+course = st.selectbox("Program Studi", [
+    "Science", "Arts", "Engineering", "Business", "Law", "Medicine", "Education"
+])  # Sesuaikan dengan kategori asli saat training
+
+marital_status = st.selectbox("Status Pernikahan", ["Single", "Married", "Divorced", "Widowed"])  # Sesuaikan juga
+
+# Tombol prediksi
 if st.button("🔍 Prediksi Dropout"):
     try:
-        input_data = {
+        # Buat DataFrame input
+        input_dict = {
+            'Gender': 1 if gender == "Laki-laki" else 0,
+            'Age_at_enrollment': age,
+            'Admission_grade': admission_grade,
             'Curricular_units_1st_sem_grade': semester1,
             'Curricular_units_2nd_sem_grade': semester2,
-            'Admission_grade': admission_grade,
-            'Debtor': 1 if debtor == "Ya" else 0,
             'Scholarship_holder': 1 if scholarship == "Ya" else 0,
+            'Debtor': 1 if debtor == "Ya" else 0,
             'Tuition_fees_up_to_date': 1 if tuition_paid == "Ya" else 0,
-            'Age_at_enrollment': age,
-            'Gender': 1 if gender == "Laki-laki" else 0
+            'Course': course,
+            'Marital_status': marital_status
         }
 
-        input_df = pd.DataFrame([input_data])
+        input_df = pd.DataFrame([input_dict])
 
-        # ⛑️ Debugging Opsional
-        # st.write("Input DataFrame:")
-        # st.dataframe(input_df)
-        # st.write("Model expects:")
-        # st.write(model.feature_names_in_)
+        # Pastikan urutan kolom sesuai model
+        input_df = input_df[model.feature_names_in_]
 
+        # Prediksi
         y_pred = model.predict(input_df)[0]
         y_prob = model.predict_proba(input_df)[0][1]
 
@@ -50,5 +59,6 @@ if st.button("🔍 Prediksi Dropout"):
     except Exception as e:
         st.error("❌ Terjadi kesalahan saat memproses prediksi.")
         st.text(f"Detail: {e}")
+
 
 
