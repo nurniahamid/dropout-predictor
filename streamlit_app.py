@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
-import joblib
+import pickle
 
 # Load model pipeline yang sudah menyertakan preprocessing
-model = joblib.load("dropout_model.pkl")
+with open("dropout_model.pkl", "rb") as f:
+    model = pickle.load(f)
 
 st.title("🎓 Prediksi Dropout Mahasiswa - Jaya Jaya Institut")
 st.markdown("Masukkan data mahasiswa untuk memprediksi kemungkinan dropout:")
