@@ -31,16 +31,16 @@ if st.button("🔍 Prediksi Dropout"):
     try:
         # Susun DataFrame sesuai input
         input_df = pd.DataFrame([{
-            'Gender': gender,
-            'Age_at_enrollment': age,
-            'Admission_grade': admission_grade,
-            'Curricular_units_1st_sem_grade': semester1,
-            'Curricular_units_2nd_sem_grade': semester2,
-            'Scholarship_holder': "Yes" if scholarship == "Ya" else "No",
-            'Debtor': "Yes" if debtor == "Ya" else "No",
-            'Tuition_fees_up_to_date': "Yes" if tuition_paid == "Ya" else "No",
-            'Course': course,
-            'Marital_status': marital_status
+            'gender': gender.lower(),
+            'age_at_enrollment': age,
+            'admission_grade': admission_grade,
+            'curricular_units_1st_sem_grade': semester1,
+            'curricular_units_2nd_sem_grade': semester2,
+            'scholarship_holder': "yes" if scholarship == "Ya" else "no",
+            'debtor': "yes" if debtor == "Ya" else "no",
+            'tuition_fees_up_to_date': "yes" if tuition_paid == "Ya" else "no",
+            'course': course.lower(),
+            'marital_status': marital_status.lower()
         }])
 
         # Prediksi
