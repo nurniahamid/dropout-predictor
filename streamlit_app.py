@@ -33,7 +33,6 @@ if st.button("🔍 Prediksi Dropout"):
         input_df = pd.DataFrame([{
             'gender': gender.lower(),
             'age_at_enrollment': age,
-            'admission_grade': admission_grade,
             'curricular_units_1st_sem_grade': semester1,
             'curricular_units_2nd_sem_grade': semester2,
             'scholarship_holder': "yes" if scholarship == "Ya" else "no",
