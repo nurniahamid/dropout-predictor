@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 
 # Load model terbaik hasil GridSearchCV
-model = joblib.load('model/best_model.pkl')
+model = joblib.load('best_model.pkl')
 
 st.set_page_config(page_title="Prediksi Dropout Siswa", layout="centered")
 st.title("🎓 Prediksi Dropout Siswa Jaya Jaya Institut")
