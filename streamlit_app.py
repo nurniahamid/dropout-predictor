@@ -2,47 +2,51 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load model terbaik hasil GridSearchCV
-model = joblib.load('best_model.pkl')
+@st.cache_resource
+def load_assets():
+    model = joblib.load("model.pkl")
+    preprocessor = joblib.load("preprocessor.pkl")
+    return model, preprocessor
 
-st.set_page_config(page_title="Prediksi Dropout Siswa", layout="centered")
-st.title("🎓 Prediksi Dropout Siswa Jaya Jaya Institut")
+model, preprocessor = load_assets()
 
-st.write("""
-Upload file CSV berisi data siswa yang ingin Anda prediksi.  
-File harus memiliki kolom yang sama seperti data training (fitur `df_selected`, kecuali `Dropout_flag`).
-""")
+# UI
+st.title("🎓 Prediksi Dropout Mahasiswa")
 
-# Upload file
-uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
+gender = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
+age = st.number_input("Usia", 15, 60, 18)
+admission_grade = st.number_input("Nilai Masuk", 0.0, 200.0, 140.0)
+semester1 = st.number_input("Nilai Semester 1", 0.0, 20.0, 12.0)
+semester2 = st.number_input("Nilai Semester 2", 0.0, 20.0, 13.0)
+scholarship = st.selectbox("Beasiswa", ["Ya", "Tidak"])
+debtor = st.selectbox("Hutang", ["Ya", "Tidak"])
+tuition_paid = st.selectbox("Biaya Kuliah Terbayar", ["Ya", "Tidak"])
+course = st.selectbox("Program Studi", ["Science", "Arts", "Engineering", "Law", "Business"])
+marital_status = st.selectbox("Status Pernikahan", ["Single", "Married", "Divorced", "Widowed"])
 
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
+if st.button("🔍 Prediksi Dropout"):
+    df = pd.DataFrame([{
+        'Gender': gender,
+        'Age_at_enrollment': age,
+        'Admission_grade': admission_grade,
+        'Curricular_units_1st_sem_grade': semester1,
+        'Curricular_units_2nd_sem_grade': semester2,
+        'Scholarship_holder': "Yes" if scholarship == "Ya" else "No",
+        'Debtor': "Yes" if debtor == "Ya" else "No",
+        'Tuition_fees_up_to_date': "Yes" if tuition_paid == "Ya" else "No",
+        'Course': course,
+        'Marital_status': marital_status
+    }])
+    
+    try:
+        X = preprocessor.transform(df)
+        pred = model.predict(X)[0]
+        prob = model.predict_proba(X)[0][1]
 
-    st.subheader("📋 Data Siswa yang Diupload")
-    st.dataframe(data.head())
-
-    # Prediksi
-    if st.button("🔍 Jalankan Prediksi Dropout"):
-        try:
-            predictions = model.predict(data)
-            data["Dropout_Prediction"] = predictions
-            data["Keterangan"] = data["Dropout_Prediction"].map({0: "✅ Tidak Dropout", 1: "❌ Potensi Dropout"})
-
-            st.subheader("📊 Hasil Prediksi")
-            st.dataframe(data)
-
-            # Download button
-            csv = data.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Download Hasil Prediksi",
-                data=csv,
-                file_name='hasil_prediksi_dropout.csv',
-                mime='text/csv'
-            )
-
-        except Exception as e:
-            st.error(f"Terjadi error saat prediksi: {e}")
-else:
-    st.info("Silakan upload file CSV terlebih dahulu.")
-
+        if pred == 1:
+            st.error(f"⚠️ Mahasiswa ini BERISIKO dropout (Prob: {prob:.2%})")
+        else:
+            st.success(f"✅ Mahasiswa ini diprediksi TIDAK dropout (Prob dropout: {prob:.2%})")
+    except Exception as e:
+        st.error("❌ Terjadi kesalahan.")
+        st.text(str(e))
